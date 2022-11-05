@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: guestbook-argo-app
+  namespace: argocd
+spec:
+  generators:
+    # matrix 'parent' generator
+    - matrix:
+        generators:
+          # list generator, 'child' #1
+          - list:
+              elements:
+              - app: nginx
+                repoURL: https://github.com/mitkar241/helm.git
+                path: charts/nginx-app
+                branch: main #HEAD
+              - app: front
+                repoURL: https://github.com/mitkar241/helm.git
+                path: charts/front-app
+                branch: main #HEAD
+          # list generator, 'child' #2
+          - list:
+              elements:
+              - cluster: cluster01
+                server: https://kubernetes.default.svc #https://kubernetes.default.svc
+                namespace: guestbook01
+              - cluster: cluster01
+                server: https://kubernetes.default.svc #https://kubernetes.default.svc
+                namespace: guestbook02
+  template:
+    metadata:
+      name: '{{app}}-{{branch}}-{{cluster}}-{{namespace}}-guestbook'
+    spec:
+      project: default
+      # Source of the application manifests
+      source:
+        repoURL: '{{ repoURL }}'  # Can point to either a Helm chart repo or a git repo.
+        targetRevision: '{{ branch }}'  # For Helm, this refers to the chart version.
+        path: '{{ path }}'  # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+      # Destination cluster and namespace to deploy the application
+      destination:
+        server: '{{ server }}'
+        # The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace
+        namespace: '{{ namespace }}'
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
+        automated:
+          selfHeal: true
+          prune: true
