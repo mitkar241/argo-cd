@@ -6,6 +6,7 @@ Declarative continuous deployment for Kubernetes
 
 ## TODO
 ---
+- [ ] [kodekloud - ArgoCD](https://kodekloud.com/courses/argocd/)
 - [ ] Research production level folder structure
 - [ ] Move to separate directory
 - [ ] Try kustomize and other k8s tools
