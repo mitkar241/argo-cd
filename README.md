@@ -9,6 +9,7 @@ Declarative continuous deployment for Kubernetes
 - [ ] Research production level folder structure
 - [ ] Move to separate directory
 - [ ] Try kustomize and other k8s tools
+- [ ] How to pull Helm charts and override files from separate repos
 
 ## Resources
 ---
